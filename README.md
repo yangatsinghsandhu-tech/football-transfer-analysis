@@ -2,10 +2,12 @@
 
 An interactive Streamlit analytics application identifying **undervalued football players** across European leagues by evaluating per-90 performance metrics against model-predicted transfer market valuations.
 
-![Streamlit](https://img.shields.io/badge/Streamlit-1.30+-00e676?style=flat-square&logo=streamlit)
+[![Live App](https://img.shields.io/badge/🚀_Live_App-Streamlit_Cloud-00e676?style=for-the-badge&logo=streamlit)](https://football-transfer-analysis-cutahstypfgimy3bc4bj4k.streamlit.app/)
 ![Python](https://img.shields.io/badge/Python-3.10+-blue?style=flat-square&logo=python)
 ![DuckDB](https://img.shields.io/badge/DuckDB-0.9+-yellow?style=flat-square)
 ![Plotly](https://img.shields.io/badge/Plotly-5.18+-purple?style=flat-square&logo=plotly)
+
+🔗 **Live Web Application**: [https://football-transfer-analysis-cutahstypfgimy3bc4bj4k.streamlit.app/](https://football-transfer-analysis-cutahstypfgimy3bc4bj4k.streamlit.app/)
 
 ---
 

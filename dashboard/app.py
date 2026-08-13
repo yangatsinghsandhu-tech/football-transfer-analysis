@@ -3,7 +3,7 @@ import pandas as pd
 import sys
 import numpy as np
 import plotly.graph_objects as go
-from utils.data import get_connection, load_undervalued, load_photos, search_players, get_all_player_names
+from utils.data import get_connection, load_undervalued, load_photos, search_players, get_all_player_names, load_compare_players
 sys.path.append('.')
 
 st.set_page_config(
@@ -290,23 +290,12 @@ elif st.session_state.page == 'undervalued':
 elif st.session_state.page == 'compare':
     st.subheader("⚖️ Compare Players")
 
-    con = get_connection()
-    all_names = con.execute("SELECT DISTINCT name FROM player_predictions ORDER BY name").df()['name'].tolist()
-
+    all_names = get_all_player_names()
     selected_players = st.multiselect("Select players to compare (2 or more)", all_names)
 
     if len(selected_players) >= 2:
         season_cmp = st.selectbox("Season", [2025, 2024, 2023], index=0, key="cmp_season")
-
-        placeholders = ", ".join(["?"] * len(selected_players))
-        query = f"""
-            SELECT name, position, age_at_season, goals_per_90, assists_per_90,
-                   total_minutes, actual_value_eur, predicted_value_eur
-            FROM player_predictions
-            WHERE name IN ({placeholders}) AND season_year = ?
-        """
-        cmp_df = con.execute(query, selected_players + [season_cmp]).df()
-        cmp_df = cmp_df.drop_duplicates(subset='name')
+        cmp_df = load_compare_players(selected_players, season_cmp)
 
         found_names = cmp_df['name'].tolist()
         missing_names = [n for n in selected_players if n not in found_names]

@@ -8,6 +8,7 @@ __pycache__/
 # Large full database file & temp wal files (use split part files transfermarkt-datasets.duckdb.part* instead)
 data/transfermarkt-datasets.duckdb
 *.wal
+*.tmp
 
 # IDE & System
 .vscode/

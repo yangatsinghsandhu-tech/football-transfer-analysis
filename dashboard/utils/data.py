@@ -6,15 +6,34 @@ import streamlit as st
 @st.cache_resource
 def get_connection():
     db_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../data/transfermarkt-datasets.duckdb'))
-    if not os.path.exists(db_path):
+    
+    if not os.path.exists(db_path) or os.path.getsize(db_path) < 10 * 1024 * 1024:
         data_dir = os.path.dirname(db_path)
+        if not os.path.exists(data_dir):
+            data_dir = os.path.abspath('data')
+            
         if os.path.exists(data_dir):
             part_files = sorted([os.path.join(data_dir, f) for f in os.listdir(data_dir) if f.startswith('transfermarkt-datasets.duckdb.part')])
             if part_files:
-                with open(db_path, 'wb') as f_out:
+                tmp_path = db_path + '.tmp'
+                with open(tmp_path, 'wb') as f_out:
                     for pf in part_files:
                         with open(pf, 'rb') as f_in:
                             f_out.write(f_in.read())
+                    f_out.flush()
+                    os.fsync(f_out.fileno())
+                
+                if os.path.exists(db_path):
+                    try:
+                        os.remove(db_path)
+                    except Exception:
+                        pass
+                try:
+                    os.replace(tmp_path, db_path)
+                except Exception:
+                    if os.path.exists(tmp_path):
+                        db_path = tmp_path
+
     if not os.path.exists(db_path):
         db_path = os.path.abspath('data/transfermarkt-datasets.duckdb')
     return duckdb.connect(db_path, read_only=True)
@@ -74,4 +93,20 @@ def search_players(search_query):
 def get_all_player_names():
     con = get_connection()
     return con.execute("SELECT DISTINCT name FROM player_predictions ORDER BY name").df()['name'].tolist()
+
+@st.cache_data
+def load_compare_players(selected_players, season):
+    if not selected_players or len(selected_players) < 2:
+        return pd.DataFrame()
+    con = get_connection()
+    placeholders = ", ".join(["?"] * len(selected_players))
+    query = f"""
+        SELECT name, position, age_at_season, goals_per_90, assists_per_90,
+               total_minutes, actual_value_eur, predicted_value_eur
+        FROM player_predictions
+        WHERE name IN ({placeholders}) AND season_year = ?
+    """
+    df = con.execute(query, selected_players + [season]).df()
+    return df.drop_duplicates(subset='name')
+
 

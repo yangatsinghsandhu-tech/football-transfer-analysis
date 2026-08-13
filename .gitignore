@@ -1,0 +1,16 @@
+# Environment & dependencies
+venv/
+env/
+ENV/
+*.pyc
+__pycache__/
+
+# Large full database file & temp wal files (use split part files transfermarkt-datasets.duckdb.part* instead)
+data/transfermarkt-datasets.duckdb
+*.wal
+
+# IDE & System
+.vscode/
+.idea/
+.DS_Store
+*.log

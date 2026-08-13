@@ -5,38 +5,45 @@ import streamlit as st
 
 @st.cache_resource
 def get_connection():
-    db_path = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../data/transfermarkt-datasets.duckdb'))
+    # 1. Check if full database exists in repo directory (>10MB)
+    base_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), '../../data'))
+    repo_db = os.path.join(base_dir, 'transfermarkt-datasets.duckdb')
     
-    if not os.path.exists(db_path) or os.path.getsize(db_path) < 10 * 1024 * 1024:
-        data_dir = os.path.dirname(db_path)
-        if not os.path.exists(data_dir):
-            data_dir = os.path.abspath('data')
+    if os.path.exists(repo_db) and os.path.getsize(repo_db) > 10 * 1024 * 1024:
+        return duckdb.connect(repo_db, read_only=True)
+        
+    # 2. Use system temp directory for Streamlit Cloud (always writable)
+    temp_dir = tempfile.gettempdir()
+    target_db = os.path.join(temp_dir, 'transfermarkt-datasets.duckdb')
+    
+    if not os.path.exists(target_db) or os.path.getsize(target_db) < 10 * 1024 * 1024:
+        part_files = sorted([os.path.join(base_dir, f) for f in os.listdir(base_dir) if f.startswith('transfermarkt-datasets.duckdb.part')])
+        if not part_files and os.path.exists('data'):
+            part_files = sorted([os.path.join('data', f) for f in os.listdir('data') if f.startswith('transfermarkt-datasets.duckdb.part')])
             
-        if os.path.exists(data_dir):
-            part_files = sorted([os.path.join(data_dir, f) for f in os.listdir(data_dir) if f.startswith('transfermarkt-datasets.duckdb.part')])
-            if part_files:
-                tmp_path = db_path + '.tmp'
-                with open(tmp_path, 'wb') as f_out:
-                    for pf in part_files:
-                        with open(pf, 'rb') as f_in:
-                            f_out.write(f_in.read())
-                    f_out.flush()
-                    os.fsync(f_out.fileno())
-                
-                if os.path.exists(db_path):
-                    try:
-                        os.remove(db_path)
-                    except Exception:
-                        pass
+        if part_files:
+            tmp_write_path = target_db + '.tmp'
+            with open(tmp_write_path, 'wb') as f_out:
+                for pf in part_files:
+                    with open(pf, 'rb') as f_in:
+                        f_out.write(f_in.read())
+                f_out.flush()
+                os.fsync(f_out.fileno())
+            
+            if os.path.exists(target_db):
                 try:
-                    os.replace(tmp_path, db_path)
+                    os.remove(target_db)
                 except Exception:
-                    if os.path.exists(tmp_path):
-                        db_path = tmp_path
+                    pass
+            try:
+                os.replace(tmp_write_path, target_db)
+            except Exception:
+                target_db = tmp_write_path
 
-    if not os.path.exists(db_path):
-        db_path = os.path.abspath('data/transfermarkt-datasets.duckdb')
-    return duckdb.connect(db_path, read_only=True)
+    if not os.path.exists(target_db):
+        target_db = repo_db
+
+    return duckdb.connect(target_db, read_only=True)
 
 @st.cache_data
 def load_undervalued(season=2025, positions=None):

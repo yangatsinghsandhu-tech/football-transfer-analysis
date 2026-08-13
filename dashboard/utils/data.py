@@ -1,5 +1,6 @@
 import duckdb
 import os
+import tempfile
 import pandas as pd
 import streamlit as st
 

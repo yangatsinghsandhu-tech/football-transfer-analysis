@@ -1,8 +1,8 @@
-# ⚽ Football Moneyball — Transfer Market Value Model
+# Football Moneyball — Transfer Market Valuation & Scouting System
 
-An interactive Streamlit analytics application identifying **undervalued football players** across European leagues by evaluating per-90 performance metrics against model-predicted transfer market valuations.
+An interactive Streamlit quantitative analytics application identifying **undervalued football players** across European leagues by evaluating per-90 performance metrics against statistical model valuations.
 
-[![Live App](https://img.shields.io/badge/🚀_Live_App-Streamlit_Cloud-00e676?style=for-the-badge&logo=streamlit)](https://football-transfer-analysis-cutahstypfgimy3bc4bj4k.streamlit.app/)
+[![Live App](https://img.shields.io/badge/Live_App-Streamlit_Cloud-10b981?style=for-the-badge&logo=streamlit)](https://football-transfer-analysis-cutahstypfgimy3bc4bj4k.streamlit.app/)
 ![Python](https://img.shields.io/badge/Python-3.10+-blue?style=flat-square&logo=python)
 ![DuckDB](https://img.shields.io/badge/DuckDB-0.9+-yellow?style=flat-square)
 ![Plotly](https://img.shields.io/badge/Plotly-5.18+-purple?style=flat-square&logo=plotly)
@@ -11,17 +11,18 @@ An interactive Streamlit analytics application identifying **undervalued footbal
 
 ---
 
-## 🌟 Key Features
+## 🌟 Key System Features
 
-- **📉 Undervalued Player Discovery**: Search and rank player listings by valuation ratio ($\text{Predicted Market Value} / \text{Actual Market Value}$).
-- **⚖️ Head-to-Head Player Comparison**: Interactive multi-bar Plotly charts comparing per-90 goals, assists, total minutes, and market values across seasons.
-- **🔍 Player Lookup & Autocomplete Search**: Real-time autocomplete name search across **40,684 records** covering **2018–2026** seasons.
-- **📊 Model Methodology & Insights**: Interactive Plotly coefficient bar chart breaking down linear regression model feature weights ($R^2 = 0.57$, MAE $\approx 0.77$).
-- **🎨 Fotmob-Inspired Dark UI**: Custom dark theme palette, pill-tab navigation, 3D hover-lift card containers, and animated count-up metrics.
+- **Undervalued Asset Discovery Index**: Search and rank player listings by valuation ratio ($\text{Valuation Ratio} = \frac{\text{Predicted Market Value}}{\text{Actual Market Value}}$).
+- **Head-to-Head Player Comparison**: Multi-metric Plotly grouped bar overlays comparing per-90 goals, assists, total minutes, and market values across seasons.
+- **Player Lookup & Autocomplete Search**: Real-time autocomplete name search across **40,684 records** covering **2018–2026** seasons.
+- **Model Architecture & Coefficients**: Interactive Plotly horizontal feature impact chart detailing linear regression weights ($R^2 = 0.57$, MAE $\approx 0.77$).
+- **Grounded Tactical UI/UX**: Professional pitch-slate theme (`#0b0f17`), IBM Plex Sans & Barlow typography, asymmetrical scouting dashboard, skeleton loading indicators, and built-in Terms of Service / Privacy Policy legal dialogs.
+- **Resilient Cloud Data Pipeline**: Automatic split-database reassembly (`part1`, `part2`, `part3`) with `/tmp` directory fallback and catalog validation for 100% reliable execution on Streamlit Cloud.
 
 ---
 
-## 🚀 Deploying to Streamlit Community Cloud (Free Hosting & Shareable Link)
+## 🚀 Deploying to Streamlit Community Cloud (Free Hosting)
 
 You can host this application live for free on [Streamlit Community Cloud](https://streamlit.io/cloud) in under 2 minutes:
 
@@ -36,7 +37,7 @@ You can host this application live for free on [Streamlit Community Cloud](https
    - Set **Main file path**: `dashboard/app.py`.
    - Click **Deploy!**
 
-Streamlit Cloud will automatically install dependencies from `requirements.txt`, auto-rejoin the database parts on first launch, and host your app on a shareable link (e.g. `https://football-transfer-analysis.streamlit.app`).
+Streamlit Cloud automatically installs dependencies from `requirements.txt`, auto-assembles split database parts in the system `/tmp` directory, and hosts your app on a shareable link (e.g. `https://football-transfer-analysis.streamlit.app`).
 
 ---
 
@@ -80,13 +81,13 @@ Streamlit Cloud will automatically install dependencies from `requirements.txt`,
 ```
 football_transfer_analysis/
 ├── .streamlit/
-│   └── config.toml             # Global Fotmob dark theme palette
+│   └── config.toml             # Grounded dark slate theme palette (#0b0f17)
 ├── dashboard/
 │   ├── .streamlit/
-│   │   └── config.toml         # Dashboard-level Streamlit theme configuration
-│   ├── app.py                  # Main Streamlit dashboard application (single-file button routing)
+│   │   └── config.toml         # App-level Streamlit theme configuration
+│   ├── app.py                  # Streamlit dashboard application (single-file routing & dialogs)
 │   └── utils/
-│       └── data.py             # DuckDB connection, cached data queries, split-DB auto-rejoin
+│       └── data.py             # DuckDB connection, catalog validation, split-DB auto-rejoin
 ├── data/
 │   ├── transfermarkt-datasets.duckdb.part1  # Split DuckDB part 1 (<70MB for GitHub limits)
 │   ├── transfermarkt-datasets.duckdb.part2  # Split DuckDB part 2
@@ -104,6 +105,7 @@ football_transfer_analysis/
 
 ---
 
-## 📄 License & Attribution
+## 📄 License & Legal Attribution
 
-Data sourced from Transfermarkt datasets. Built with Python, Streamlit, DuckDB, and Plotly.
+- **Data Sources**: Transfermarkt Public Datasets & StatsBomb Open Data repositories.
+- **Terms & Privacy**: Legal disclaimers and privacy guidelines integrated directly via in-app dialog modals.

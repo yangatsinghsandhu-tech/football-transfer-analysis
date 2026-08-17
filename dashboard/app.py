@@ -210,23 +210,25 @@ if 'show_privacy' not in st.session_state:
 def go_to(page_name):
     st.session_state.page = page_name
 
-# ---------- TOP NAV TAB BAR ----------
-n1, n2, n3, n4, n5 = st.columns([1.8, 1, 1, 1, 1])
-with n1:
-    if st.button("Moneyball Overview", use_container_width=True):
-        go_to('home')
-with n2:
-    if st.button("Undervalued Index", use_container_width=True):
-        go_to('undervalued')
-with n3:
-    if st.button("Player Comparison", use_container_width=True):
-        go_to('compare')
-with n4:
-    if st.button("Player Search", use_container_width=True):
-        go_to('search')
-with n5:
-    if st.button("Model Insights", use_container_width=True):
-        go_to('insights')
+# ---------- TOP NAV TAB BAR WITH ACTIVE STATE ----------
+nav_items = [
+    ('home', 'Moneyball Overview'),
+    ('undervalued', 'Undervalued Index'),
+    ('compare', 'Player Comparison'),
+    ('search', 'Player Search'),
+    ('insights', 'Model Insights')
+]
+
+n1, n2, n3, n4, n5 = st.columns([1.8, 1.4, 1.4, 1.4, 1.4])
+nav_cols = [n1, n2, n3, n4, n5]
+
+for idx, (p_code, p_title) in enumerate(nav_items):
+    with nav_cols[idx]:
+        is_active = st.session_state.page == p_code
+        btn_label = f"● {p_title}" if is_active else p_title
+        if st.button(btn_label, key=f"nav_top_{p_code}", use_container_width=True, type="primary" if is_active else "secondary"):
+            go_to(p_code)
+            st.rerun()
 
 st.divider()
 
@@ -277,17 +279,29 @@ if st.session_state.page == 'home':
         </div>
         """, unsafe_allow_html=True)
 
-        st.markdown("<div style='font-size: 0.9rem; font-weight: 700; color: #cbd5e1; margin-bottom: 0.5rem;'>Tactical Modules</div>", unsafe_allow_html=True)
-        act1, act2, act3 = st.columns(3)
-        with act1:
-            if st.button("Browse Undervalued Index", use_container_width=True):
-                go_to('undervalued')
-        with act2:
-            if st.button("Compare Player Profiles", use_container_width=True):
-                go_to('compare')
-        with act3:
-            if st.button("Lookup Player Stats", use_container_width=True):
-                go_to('search')
+        # System Operations & Data Pipeline Specs (Replaces redundant Tactical Modules)
+        spec1, spec2, spec3 = st.columns(3)
+        with spec1:
+            st.markdown("""
+            <div class="scout-card" style="padding: 0.85rem; min-height: 100px;">
+                <div style="font-size: 0.75rem; font-weight: 700; color: #10b981; text-transform: uppercase;">Feature Pipeline</div>
+                <div style="font-size: 0.85rem; color: #cbd5e1; margin-top: 0.3rem;">13 per-90, demographic & league quality variables</div>
+            </div>
+            """, unsafe_allow_html=True)
+        with spec2:
+            st.markdown("""
+            <div class="scout-card" style="padding: 0.85rem; min-height: 100px;">
+                <div style="font-size: 0.75rem; font-weight: 700; color: #38bdf8; text-transform: uppercase;">Database Layer</div>
+                <div style="font-size: 0.85rem; color: #cbd5e1; margin-top: 0.3rem;">DuckDB in-memory analytical query execution</div>
+            </div>
+            """, unsafe_allow_html=True)
+        with spec3:
+            st.markdown("""
+            <div class="scout-card" style="padding: 0.85rem; min-height: 100px;">
+                <div style="font-size: 0.75rem; font-weight: 700; color: #f59e0b; text-transform: uppercase;">Target Discovery</div>
+                <div style="font-size: 0.85rem; color: #cbd5e1; margin-top: 0.3rem;">Automated identification of market pricing anomalies</div>
+            </div>
+            """, unsafe_allow_html=True)
 
     with side_col:
         st.markdown("""
